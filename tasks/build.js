@@ -29,8 +29,8 @@ module.exports = function(grunt) {
         for(var n in paths ){
             app.use(connect.static(paths[n]))
         }
-        app.listen(port)
-        app.listen(ssl_port)
+        var wserver = http.createServer(app).listen(port);
+        var wsserver = http.createServer(app).listen(ssl_port);
 
 
         var childArgs = [
@@ -43,7 +43,8 @@ module.exports = function(grunt) {
 
         childProcess.execFile(phantomjs.path, childArgs, function(err, stdout, stderr) {
 
-            app.close();
+            if(wserver!==null)wserver.close();
+            if(wsserver!==null)wsserver.close();
 
             if( stderr != "" ){
                 console.log( "phantomjs error" );
