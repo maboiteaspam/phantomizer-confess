@@ -15,7 +15,7 @@
     },
     "dependencies": {
         "grunt": "0.4.x",
-        "connect": "2.7.x",
+        "connect": "2.x.x",
         "phantomjs": "1.9.x"
     },
     "devDependencies": {
