@@ -10,6 +10,7 @@ module.exports = function(grunt) {
         var phantomjs = require('phantomjs');
         var http = require('http');
         var connect = require('connect');
+        var ph = require("phantomizer");
 
 
         var options = this.options();
@@ -18,23 +19,21 @@ module.exports = function(grunt) {
         var ssl_port = options.ssl_port;
         var paths = options.paths;
 
-        var wserver = null;
-        var wsserver = null;
+        var webserver = null;
         var target_url = in_request;
         if( target_url.match(/^http/) == null ){
             target_url = "http://localhost:"+port+in_request;
 
-            var app = connect()
-            app.use(connect.query())
-            app.use(connect.urlencoded())
-            if( options.log ){
-                app.use(connect.logger('dev'))
-            }
-            for(var n in paths ){
-                app.use(connect.static(paths[n]))
-            }
-            wserver = http.createServer(app).listen(port);
-            wsserver = http.createServer(app).listen(ssl_port);
+            webserver = ph.webserver;
+            var grunt_config = grunt.config.get();
+            grunt_config.log = true;
+            grunt_config.web_paths = options.paths;
+            webserver = new webserver(process.cwd(), grunt_config);
+            webserver.is_phantom(true);
+            webserver.enable_dashboard(false);
+            webserver.enable_build(false);
+            webserver.enable_assets_inject(options.inject_assets);
+            webserver.start(options.port, options.ssl_port);
         }
 
         var childArgs = [
@@ -47,17 +46,11 @@ module.exports = function(grunt) {
         var done = this.async();
 
         childProcess.execFile(phantomjs.path, childArgs, function(err, stdout, stderr) {
-
-            if(wserver!==null)wserver.close();
-            if(wsserver!==null)wsserver.close();
-
             if( stderr != "" ){
                 console.log( "phantomjs error" );
                 console.log( stderr );
-                done(false)
             } else {
                 console.log(stdout);
-                done()
             }
         })
     });
