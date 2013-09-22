@@ -2,14 +2,14 @@
 
 module.exports = function(grunt) {
 
-    grunt.registerMultiTask("phantomizer-confess", "Confess page performance", function () {
+    grunt.registerMultiTask("phantomizer-confess", "Measure page loading times", function () {
 
         var fs = require("fs")
 
-        var childProcess = require('child_process')
-        var phantomjs = require('phantomjs')
-        var http = require('http')
-        var connect = require('connect')
+        var childProcess = require('child_process');
+        var phantomjs = require('phantomjs');
+        var http = require('http');
+        var connect = require('connect');
 
 
         var options = this.options();
@@ -18,29 +18,33 @@ module.exports = function(grunt) {
         var ssl_port = options.ssl_port;
         var paths = options.paths;
 
+        var wserver = null;
+        var wsserver = null;
+        var target_url = in_request;
+        if( target_url.match(/^http/) == null ){
+            target_url = "http://localhost:"+port+in_request;
 
-        var target_url = "http://localhost:"+port+in_request;
-
-        var app = connect()
-        app.use(connect.query())
-        app.use(connect.urlencoded())
-        if( options.log ){
-            app.use(connect.logger('dev'))
+            var app = connect()
+            app.use(connect.query())
+            app.use(connect.urlencoded())
+            if( options.log ){
+                app.use(connect.logger('dev'))
+            }
+            for(var n in paths ){
+                app.use(connect.static(paths[n]))
+            }
+            wserver = http.createServer(app).listen(port);
+            wsserver = http.createServer(app).listen(ssl_port);
         }
-        for(var n in paths ){
-            app.use(connect.static(paths[n]))
-        }
-        var wserver = http.createServer(app).listen(port);
-        var wsserver = http.createServer(app).listen(ssl_port);
-
 
         var childArgs = [
             __dirname+'/../vendors/confess.js',
-            target_url
+            target_url,
+            'performance',
+             __dirname+'/../vendors/config.json'
         ]
 
         var done = this.async();
-
 
         childProcess.execFile(phantomjs.path, childArgs, function(err, stdout, stderr) {
 
@@ -53,6 +57,7 @@ module.exports = function(grunt) {
                 done(false)
             } else {
                 console.log(stdout);
+                done()
             }
         })
     });
