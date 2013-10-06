@@ -17,7 +17,8 @@
         "grunt": "0.4.x",
         "connect": "2.x.x",
         "phantomjs": "1.9.x",
-        "phantomizer": "maboiteaspam/phantomizer"
+        "phantomizer": "maboiteaspam/phantomizer",
+        "phantomizer-libutil": "maboiteaspam/phantomizer-libutil"
     },
     "devDependencies": {
     }
