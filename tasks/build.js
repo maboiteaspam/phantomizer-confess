@@ -7,7 +7,6 @@ module.exports = function(grunt) {
     var childProcess = require('child_process');
     var phantomjs = require('phantomjs');
     var http = require('http');
-    var connect = require('connect');
     var ph_libutil = require("phantomizer-libutil");
 
     grunt.registerMultiTask("phantomizer-confess", "Measure page loading times", function () {
