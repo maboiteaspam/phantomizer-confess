@@ -8,12 +8,11 @@ module.exports = function(grunt) {
     var phantomjs = require('phantomjs');
     var http = require('http');
     var connect = require('connect');
-    var ph = require("phantomizer");
     var ph_libutil = require("phantomizer-libutil");
 
     grunt.registerMultiTask("phantomizer-confess", "Measure page loading times", function () {
 
-        var webserver = ph.webserver;
+        var webserver = ph_libutil.webserver;
 
         var router_factory = ph_libutil.router;
         var optimizer_factory = ph_libutil.optimizer;
