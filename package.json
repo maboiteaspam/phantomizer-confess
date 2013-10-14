@@ -2,7 +2,7 @@
     "name": "phantomizer-confess",
     "version": "0.1.13",
     "private": true,
-    "description": "Confess module for phantomizer : Measure and observe page loading time test",
+    "description": "Confess module for phantomizer : Measure and observe page loading time",
     "keywords": "",
     "bugs": {
         "url": "http://github.com/maboiteaspam/phantomizer-confess/issues",
