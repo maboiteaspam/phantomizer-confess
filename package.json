@@ -5,21 +5,20 @@
     "description": "Confess module for phantomizer : Measure and observe page loading time",
     "keywords": "",
     "bugs": {
-        "url" : "http://github.com/maboiteaspam/phantomizer-confess/issues"
-        , "email" : "none@host.com"
+        "url": "http://github.com/maboiteaspam/phantomizer-confess/issues",
+        "email": "none@host.com"
     },
-    "license" : "mit",
-    "repository" :{
-        "type" : "git"
-        , "url" : "http://github.com/maboiteaspam/phantomizer-confess.git"
+    "license": "mit",
+    "repository": {
+        "type": "git",
+        "url": "http://github.com/maboiteaspam/phantomizer-confess.git"
     },
     "dependencies": {
         "grunt": "0.4.x",
         "connect": "2.x.x",
         "phantomjs": "1.9.x",
-        "phantomizer": "maboiteaspam/phantomizer",
-        "phantomizer-libutil": "maboiteaspam/phantomizer-libutil"
+        "phantomizer": "maboiteaspam/maboiteaspam/maboiteaspam/phantomizer#16cd95f",
+        "phantomizer-libutil": "maboiteaspam/maboiteaspam/maboiteaspam/phantomizer-libutil#010b357"
     },
-    "devDependencies": {
-    }
+    "devDependencies": {}
 }
