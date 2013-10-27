@@ -20,8 +20,8 @@ http://github.com/maboiteaspam/phantomizer
 
 ```javascript
 {
-  'phantomizer-docco': {         // Task
-    document: {                  // Target
+  'phantomizer-confess': {         // Task
+    confess: {                  // Target
       options: {                 // Target options
             meta_dir:'', // paths to look for metadata, if in_request is relative to your phantomizer project
             web_server_paths:[], // paths to look for assets, if in_request is relative to your phantomizer project
@@ -33,6 +33,18 @@ http://github.com/maboiteaspam/phantomizer
             host:'http://localhost', // host address, if in_request is relative to your phantomizer project
             action:'performance' // Confess action performance|appcache|cssproperties, default: performance
       }
+    },
+    "index":{
+        "options":{
+            "in_request":"index.html",
+            "action":"appcache"
+        }
+    },
+    "google":{
+        "options":{
+            "in_request":"http://google.com",
+            "action":"performance"
+        }
     }
   }
 }
