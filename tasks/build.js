@@ -2,62 +2,82 @@
 
 module.exports = function(grunt) {
 
-    var fs = require("fs")
+    var fs = require("fs");
 
     var childProcess = require('child_process');
     var phantomjs = require('phantomjs');
-    var http = require('http');
     var ph_libutil = require("phantomizer-libutil");
 
     grunt.registerMultiTask("phantomizer-confess", "Measure page loading times", function () {
 
-        var webserver = ph_libutil.webserver;
-
-        var router_factory = ph_libutil.router;
-        var optimizer_factory = ph_libutil.optimizer;
-        var meta_factory = ph_libutil.meta;
+        var webserver           = ph_libutil.webserver;
+        var router_factory      = ph_libutil.router;
+        var optimizer_factory   = ph_libutil.optimizer;
+        var meta_factory        = ph_libutil.meta;
 
         var config = grunt.config.get();
-        var meta_manager = new meta_factory(process.cwd(), config.meta_dir)
-        var optimizer = new optimizer_factory(meta_manager, config)
+
+        var options = this.options({
+            meta_dir:'',
+            web_server_paths:[],
+            in_request:'',
+            port:'',
+            ssl_port:'',
+            web_server_log:false,
+            inject_assets:true,
+            host:'http://localhost',
+            action:'performance'
+        });
+
+        var in_request = options.in_request;
+        var web_server_paths = options.web_server_paths;
+        var meta_dir = options.meta_dir;
+        var host = options.host;
+        var port = options.port?options.port:"";
+        var ssl_port = options.ssl_port?options.ssl_port:"";
+        var action = options.action;
+        var web_server_log = options.web_server_log;
+        var inject_assets = options.inject_assets;
+
+        var meta_manager = new meta_factory(process.cwd(), meta_dir);
+        var optimizer = new optimizer_factory(meta_manager, config);
         var router = new router_factory(config.routing);
 
         var done = this.async();
         var finish = function(stderr,stdout){
             if( stderr != "" ){
-                console.log( "phantomjs error" );
-                console.log( stderr );
+                grunt.log.warn( "phantomjs error" );
+                grunt.log.warn( stderr );
             } else {
-                console.log(stdout);
+                grunt.log.writeln(stdout);
             }
+            if(webserver.stop) webserver.stop();
             done();
         }
 
-        var options = this.options();
-        var in_request = options.in_request;
-        var port = options.port;
-
         var target_url = in_request;
-        if( target_url.match(/^http/) == null ){
+        if( in_request.match(/^http/) == null ){
             router.load(function(){
 
-                target_url = "http://localhost:"+port+in_request;
+                config.log = web_server_log;
+                config.web_paths = web_server_paths;
+                webserver = new webserver(router,optimizer,meta_manager,process.cwd(), config);
 
-                var grunt_config = grunt.config.get();
-                grunt_config.log = true;
-                grunt_config.web_paths = options.paths;
-                webserver = new webserver(router,optimizer,meta_manager,process.cwd(), grunt_config);
-                webserver.is_phantom(true);
+                webserver.is_phantom(false);
                 webserver.enable_dashboard(false);
                 webserver.enable_build(false);
-                webserver.enable_assets_inject(options.inject_assets);
-                webserver.start(options.port, options.ssl_port);
+                webserver.enable_assets_inject(inject_assets);
 
-                run_confess(target_url,'performance',finish);
+                webserver.start(port, ssl_port);
+
+                in_request = in_request.substring(1)=="/"?in_request:"/"+in_request;
+                target_url = host+(port?":"+port:port)+in_request;
+                grunt.log.ok("Running "+target_url)
+                run_confess(target_url, action,finish);
             });
 
         }else{
-            run_confess(target_url,'performance',finish);
+            run_confess(in_request,action,finish);
         }
     });
 
