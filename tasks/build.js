@@ -21,11 +21,11 @@ module.exports = function(grunt) {
             meta_dir:'',
             web_server_paths:[],
             in_request:'',
+            host:'localhost',
             port:'',
             ssl_port:'',
             web_server_log:false,
             inject_assets:true,
-            host:'http://localhost',
             action:'performance'
         });
 
@@ -68,11 +68,11 @@ module.exports = function(grunt) {
                 webserver.enable_build(false);
                 webserver.enable_assets_inject(inject_assets);
 
-                webserver.start(port, ssl_port);
+                webserver.start(port, ssl_port, host);
 
                 in_request = in_request.substring(1)=="/"?in_request:"/"+in_request;
-                target_url = host+(port?":"+port:port)+in_request;
-                grunt.log.ok("Running "+target_url)
+                target_url = "http://"+host+(port?":"+port:port)+in_request;
+                grunt.log.ok("Running "+target_url);
                 run_confess(target_url, action,finish);
             });
 
