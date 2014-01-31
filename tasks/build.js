@@ -40,7 +40,7 @@ module.exports = function(grunt) {
         var inject_assets = options.inject_assets;
 
         var meta_manager = new meta_factory(process.cwd(), meta_dir);
-        var optimizer = new optimizer_factory(meta_manager, config);
+        var optimizer = new optimizer_factory(meta_manager, config, grunt);
         var router = new router_factory(config.routing);
 
         var done = this.async();
@@ -61,7 +61,7 @@ module.exports = function(grunt) {
 
                 config.log = web_server_log;
                 config.web_paths = web_server_paths;
-                webserver = new webserver(router,optimizer,meta_manager,process.cwd(), config);
+                webserver = new webserver(router,optimizer,meta_manager,process.cwd(), config, grunt);
 
                 webserver.is_phantom(false);
                 webserver.enable_dashboard(false);
