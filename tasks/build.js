@@ -59,11 +59,7 @@ module.exports = function(grunt) {
         if( in_request.match(/^http/) == null ){
             router.load(function(){
 
-                config.log = web_server_log;
-                config.web_paths = web_server_paths;
-                webserver = new webserver(router,optimizer,meta_manager,process.cwd(), config, grunt);
-
-                webserver.is_phantom(false);
+                webserver = new webserver(router,optimizer,meta_manager,grunt, web_server_paths);
                 webserver.enable_dashboard(false);
                 webserver.enable_build(false);
                 webserver.enable_assets_inject(inject_assets);
