@@ -52,6 +52,13 @@ http://github.com/maboiteaspam/phantomizer
 ```
 
 
+# Documentation Index
+
+http://maboiteaspam.github.io/phantomizer-confess/
+
+http://maboiteaspam.github.io/phantomizer-confess/documentation/build.html
+
+
 ## Release History
 
 
