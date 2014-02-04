@@ -43,6 +43,7 @@ module.exports = function(grunt) {
     var optimizer = new optimizer_factory(meta_manager, config, grunt);
     var router = new router_factory(config.routing);
 
+
     var done = this.async();
     var finish = function(stderr,stdout){
       if( stderr != "" ){
