@@ -52,8 +52,12 @@ module.exports = function(grunt) {
       } else {
         grunt.log.writeln(stdout);
       }
-      if(webserver.stop) webserver.stop();
-      done();
+      if(webserver.stop){
+        webserver.stop(function(){
+          done();
+        });
+      }
+      else done();
     }
 
     var target_url = in_request;
