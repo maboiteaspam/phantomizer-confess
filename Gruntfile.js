@@ -1,28 +1,8 @@
 
 module.exports = function(grunt) {
 
-  var d = __dirname+"/vendors/phantomizer-confess";
-
-  var out_dir = d+"/demo/out/";
-  var meta_dir = d+"/demo/out/";
-
-
   grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json')
-
-    ,port:8080
-    ,ssl_port:8081
-    ,paths:[d+"/demo/in/"]
-    ,"out_dir":out_dir
-    ,"meta_dir":meta_dir
-
-    ,'phantomizer-confess': {
-      demo: {
-        options: {
-          in_request:"/"
-        }
-      }
-    },
+    pkg: grunt.file.readJSON('package.json'),
     docco: {
       debug: {
         src: [
@@ -43,12 +23,10 @@ module.exports = function(grunt) {
     },
     release: {
       options: {
-        bump: true,
-        add: false,
-        commit: false,
-        npm: false,
-        npmtag: true,
-        tagName: '<%= version %>',
+        npm: false, //default: true
+        // true will apply the version number as the tag
+        npmtag: true, //default: no tag
+        tagName: '<%= version %>', //default: '<%= version %>'
         github: {
           repo: 'maboiteaspam/phantomizer-confess',
           usernameVar: 'GITHUB_USERNAME',
@@ -58,7 +36,6 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.loadNpmTasks('phantomizer-confess');
   /*
    grunt.registerTask('default',
    [
