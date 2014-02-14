@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>build.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="public/stylesheets/normalize.css" />
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="page">
+
+      <div class="header">
+        
+          <h1>build.js</h1>
+        
+
+        
+      </div>
+
+      
+        
+        
+        
+          <div class='highlight'><pre><span class="hljs-pi">'use strict'</span>;
+
+module.exports = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(grunt)</span> {</span>
+
+  <span class="hljs-keyword">var</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">"fs"</span>);
+
+  <span class="hljs-keyword">var</span> childProcess = <span class="hljs-built_in">require</span>(<span class="hljs-string">'child_process'</span>);
+  <span class="hljs-keyword">var</span> phantomjs = <span class="hljs-built_in">require</span>(<span class="hljs-string">'phantomjs'</span>);
+  <span class="hljs-keyword">var</span> ph_libutil = <span class="hljs-built_in">require</span>(<span class="hljs-string">"phantomizer-libutil"</span>);
+
+  grunt.registerMultiTask(<span class="hljs-string">"phantomizer-confess"</span>, <span class="hljs-string">"Measure page loading times"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">()</span> {</span>
+
+    <span class="hljs-keyword">var</span> options = <span class="hljs-keyword">this</span>.options({
+      web_server_paths:[],
+      in_request:<span class="hljs-string">''</span>,
+      host:<span class="hljs-string">'localhost'</span>,
+      port:<span class="hljs-string">''</span>,
+      ssl_port:<span class="hljs-string">''</span>,
+      web_server_log:<span class="hljs-literal">false</span>,
+      inject_assets:<span class="hljs-literal">true</span>,
+      action:<span class="hljs-string">'performance'</span>
+    });
+
+    <span class="hljs-keyword">var</span> in_request = options.in_request;
+    <span class="hljs-keyword">var</span> web_server_paths = options.web_server_paths;
+    <span class="hljs-keyword">var</span> host = options.host;
+    <span class="hljs-keyword">var</span> port = options.port?options.port:<span class="hljs-string">""</span>;
+    <span class="hljs-keyword">var</span> ssl_port = options.ssl_port?options.ssl_port:<span class="hljs-string">""</span>;
+    <span class="hljs-keyword">var</span> action = options.action;
+    <span class="hljs-keyword">var</span> inject_assets = options.inject_assets;
+
+
+    <span class="hljs-keyword">var</span> done = <span class="hljs-keyword">this</span>.async();
+    <span class="hljs-keyword">var</span> finish = <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(stderr,stdout)</span>{</span>
+      <span class="hljs-keyword">if</span>( stderr != <span class="hljs-string">""</span> ){
+        grunt.log.warn( <span class="hljs-string">"phantomjs error"</span> );
+        grunt.log.warn( stderr );
+      } <span class="hljs-keyword">else</span> {
+        grunt.log.writeln(stdout);
+      }
+      done();
+    }
+
+    <span class="hljs-keyword">var</span> target_url = in_request;
+    <span class="hljs-keyword">if</span>( in_request.match(<span class="hljs-regexp">/^http/</span>) == <span class="hljs-literal">null</span> ){</pre></div>
+        
+      
+        
+        <p>get phantomizer main instance</p>
+
+        
+          <div class='highlight'><pre>      <span class="hljs-keyword">var</span> phantomizer = ph_libutil.get(<span class="hljs-string">"main"</span>);
+
+      phantomizer.create_webserver(web_server_paths,<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(webserver)</span>{</span>
+        webserver.enable_dashboard(<span class="hljs-literal">false</span>);
+        webserver.enable_build(<span class="hljs-literal">false</span>);
+        webserver.enable_assets_inject(inject_assets);
+
+        webserver.start(port, ssl_port, host);
+
+        in_request = in_request.substring(<span class="hljs-number">1</span>)==<span class="hljs-string">"/"</span>?in_request:<span class="hljs-string">"/"</span>+in_request;
+        target_url = <span class="hljs-string">"http://"</span>+host+(port?<span class="hljs-string">":"</span>+port:port)+in_request;
+        grunt.log.ok(<span class="hljs-string">"Running "</span>+target_url);
+        run_confess(target_url, action, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(stderr,stdout)</span>{</span>
+          <span class="hljs-keyword">if</span>(webserver.stop){
+            webserver.stop(<span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(stderr,stdout)</span>{</span>
+              finish();
+            });
+          }
+        });
+      });
+    }<span class="hljs-keyword">else</span>{
+      run_confess(in_request,action,finish);
+    }
+  });
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">run_confess</span><span class="hljs-params">(target_url,action,then)</span>{</span>
+    <span class="hljs-keyword">var</span> childArgs = [
+      __dirname+<span class="hljs-string">'/../vendors/confess.js'</span>,
+      target_url,
+      action,
+      __dirname+<span class="hljs-string">'/../vendors/config.json'</span>
+    ]
+
+    childProcess.execFile(phantomjs.path, childArgs, <span class="hljs-function"><span class="hljs-keyword">function</span><span class="hljs-params">(err, stdout, stderr)</span> {</span>
+      <span class="hljs-keyword">if</span>(then) then(stderr,stdout);
+    })
+  }
+};</pre></div>
+        
+      
+      <div class="fleur">h</div>
+    </div>
+  </div>
+</body>
+</html>
