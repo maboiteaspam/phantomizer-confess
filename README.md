@@ -23,7 +23,6 @@ http://github.com/maboiteaspam/phantomizer
   'phantomizer-confess': {         // Task
     confess: {                  // Target
       options: {                 // Target options
-            meta_dir:'', // paths to look for metadata, if in_request is relative to your phantomizer project
             web_server_paths:[], // paths to look for assets, if in_request is relative to your phantomizer project
             in_request:'', // in request
             port:'', // host port, if in_request is relative to your phantomizer project
