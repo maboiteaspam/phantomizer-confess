@@ -44,7 +44,8 @@ module.exports = function(grunt) {
     var target_url = in_request;
     if( in_request.match(/^http/) == null ){
 // get phantomizer main instance
-      var phantomizer = ph_libutil.get("main");
+      var Phantomizer = ph_libutil.Phantomizer;
+      var phantomizer = new Phantomizer(process.cwd(),grunt);
 
       phantomizer.create_webserver(web_server_paths,function(webserver){
         webserver.enable_dashboard(false);
