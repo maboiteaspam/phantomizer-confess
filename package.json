@@ -1,6 +1,6 @@
 {
   "name": "phantomizer-confess",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "private": true,
   "description": "Confess module for phantomizer : Measure and observe page loading time",
   "keywords": "",
